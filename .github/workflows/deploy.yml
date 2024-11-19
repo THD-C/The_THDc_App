@@ -27,7 +27,7 @@ jobs:
           } -Uri "https://api.github.com/orgs/THD-C/actions/runners"
 
           $RunnerList = $APIResponse.runners
-          $SelfHosted = $RunnerList | Where-Object { $_.os == "Linux" -and $_.name -eq "thdc" }
+          $SelfHosted = $RunnerList | Where-Object { $_.os -eq "Linux" -and $_.name -eq "thdc" }
 
           if ($SelfHosted.status -ne "offline") {
             Add-Content -Path $env:GITHUB_OUTPUT -Value "env_up=true"
