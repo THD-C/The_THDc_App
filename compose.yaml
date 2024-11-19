@@ -16,6 +16,17 @@ services:
       start_period: 30s
       timeout: 10s
 
+  Mongo:
+    build: https://github.com/THD-C/Mongo.git
+    image: thd/mongo
+    container_name: THD_Mongo
+    hostname: Mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017 
+    volumes:
+      - MO-Data:/data/db
+
   DB_Manager:
     build: https://github.com/THD-C/DB_Manager.git
     image: thd/db_manager
@@ -54,3 +65,4 @@ services:
     
 volumes:
   PG-Data:
+  MO-Data:
