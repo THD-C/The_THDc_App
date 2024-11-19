@@ -1,0 +1,48 @@
+name: Deploy App
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        type: choice
+        default: 'Production'
+        options:
+          - 'Production'
+
+jobs:
+  CheckIfRunning:
+    runs-on: ubuntu-latest
+    outputs:
+      env_up: ${{ steps.check_runner.outputs.env_up }}
+    steps:
+      - name: Check Self-Hosted Runner
+        id: check_runner
+        shell: pwsh
+        run: |
+          $APIResponse = Invoke-RestMethod -Headers @{
+            "Accept" = "application/vnd.github+json"
+            "Authorization" = "Bearer ${{ secrets.THDCPL_TOKEN }}"
+            "X-GitHub-Api-Version" = "2022-11-28"
+          } -Uri "https://api.github.com/orgs/THD-C/actions/runners"
+
+          $RunnerList = $APIResponse.runners
+          $SelfHosted = $RunnerList | Where-Object { $_.os == "Linux" -and $_.name -eq "thdc" }
+
+          if ($SelfHosted.status -ne "offline") {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "env_up=true"
+          } else {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "env_up=false"
+          }
+
+  Deploy:
+    needs: CheckIfRunning
+    if: ${{ needs.CheckIfRunning.outputs.env_up == 'true' }}
+    runs-on: self-hosted
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Images
+        run: docker compose up -d --force-recreate
