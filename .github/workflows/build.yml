@@ -49,7 +49,7 @@ jobs:
 
       - name: Set github_token secret
         run: |
-          echo "${{ secrets.THDCPL_TOKEN }}" > ./github_token
+          echo "${{ secrets.THDCPL_TOKEN }}" > ./.github_token
 
       - name: Build Images
         run: docker compose build --no-cache
