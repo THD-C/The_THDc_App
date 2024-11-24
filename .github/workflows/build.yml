@@ -47,5 +47,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set github_token secret
+        run: |
+          echo "${{ secrets.THDCPL_TOKEN }}" > ./github_token
+
       - name: Build Images
-        run: docker compose build
+        run: docker compose build --no-cache
