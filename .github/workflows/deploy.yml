@@ -44,5 +44,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Images
+      - name: Run Containers
         run: docker compose up -d --force-recreate
