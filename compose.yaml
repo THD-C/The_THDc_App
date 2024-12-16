@@ -29,6 +29,12 @@ services:
       - 27017:27017 
     volumes:
       - MO-Data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   Mongo_Manager:
     build: https://github.com/THD-C/Mongo_Manager.git
