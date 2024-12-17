@@ -159,6 +159,8 @@ services:
       - ${PROMETHEUS_PORT}:9090
 
   Grafana:
+      profiles:
+        - Telemetry
       image: ${GRAFANA_IMAGE_NAME}
       build:
         context: ./Grafana
