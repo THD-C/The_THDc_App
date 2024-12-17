@@ -9,8 +9,10 @@ rule_files:
 
 
 scrape_configs:
-  - job_name: "DB_Manager"
+  - job_name: "Microservices_metrics"
     static_configs:
       - targets: [
-          "codespace.Horna.local:8111"
+          "Mongo_Manager:8111",
+          "DB_Manager:8111",
+          "Frontend_API:8111"
         ]
