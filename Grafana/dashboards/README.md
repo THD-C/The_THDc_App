@@ -1,0 +1,1 @@
+Directory to store `.json` dashboards definition

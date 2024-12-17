@@ -48,4 +48,4 @@ jobs:
         run: docker compose down -v -t 20 --remove-orphans
 
       - name: Run Containers
-        run: docker compose up -d --force-recreate
+        run: docker compose --profile APP up -d --force-recreate

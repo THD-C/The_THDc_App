@@ -1,0 +1,21 @@
+apiVersion: 1
+
+datasources:
+  - name: Tempo
+    type: tempo
+    uid: gobeoucwiu342b
+    access: proxy
+    url: http://Tempo:3200
+    isDefault: false
+    version: 1
+    editable: false
+    basicAuth: false
+    jsonData:
+      tracesToMetrics:
+        datasourceUid: reioqwiej32nov
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+      serviceMap:
+        datasourceUid: reioqwiej32nov
+      nodeGraph:
+        enabled: true
