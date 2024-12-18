@@ -50,7 +50,7 @@ jobs:
         run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} down ${{inputs.service}} -v
       
       - name: Run Container
-        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d ${{inputs.service}} --force-recreate
+        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d
 
       - name: Cleau up deployment server
         run: docker system prune --force --volumes
