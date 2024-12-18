@@ -12,7 +12,9 @@ on:
 
 jobs:
   CheckIfRunning:
-    uses: THD-C/The_THDc_App/.github/workflows/.github/workflows/build-service-image.yml@main
+    uses: THD-C/The_THDc_App/.github/workflows/check-self-hosted-runner.yml@main
+    secrets: inherit
+
 
   Build:
     needs: CheckIfRunning
