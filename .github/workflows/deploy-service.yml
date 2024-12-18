@@ -51,3 +51,6 @@ jobs:
       
       - name: Run Container
         run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d ${{inputs.service}} --force-recreate
+
+      - name: Cleau up deployment server
+        run: docker system prune --force --volumes
