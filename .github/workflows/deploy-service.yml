@@ -1,4 +1,5 @@
-name: Build Docker Image
+name: Deploy Service
+run-name: Deploy ${{ inputs.service }}
 
 on:
   workflow_dispatch:
@@ -30,7 +31,7 @@ jobs:
 
   Build:
     needs: CheckIfRunning
-    if: ${{ needs.CheckIfRunning.outputs.env_up == 'true' }}
+    if: ${{ needs.CheckIfRunning.outputs.isRunnerUp == 'true' }}
     runs-on: self-hosted
     environment: ${{ inputs.environment }}
     steps:
