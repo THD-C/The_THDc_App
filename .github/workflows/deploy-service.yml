@@ -24,7 +24,7 @@ env:
 
 jobs:
   CheckIfRunning:
-    uses: THD-C/The_THDc_App/.github/workflows/.github/workflows/check-self-hosted-runner.yml@main
+    uses: THD-C/The_THDc_App/.github/workflows/check-self-hosted-runner.yml@main
 
 
   Build:
