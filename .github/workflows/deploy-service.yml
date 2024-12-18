@@ -46,7 +46,7 @@ jobs:
         run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} build ${{inputs.service}} --no-cache
       
       - name: Stop exitsing container
-        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} down -v -t 20 --rmi
+        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} down ${{inputs.service}} -v -t 20 --rmi
       
       - name: Run Container
         run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d ${{inputs.service}} --force-recreate
