@@ -1,4 +1,4 @@
-name: Build Docker Images
+name: Build ALL Docker Images
 
 on:
   workflow_dispatch:
@@ -12,31 +12,7 @@ on:
 
 jobs:
   CheckIfRunning:
-    runs-on: ubuntu-latest
-    outputs:
-      env_up: ${{ steps.check_runner.outputs.env_up }}
-    steps:
-      - name: Check Self-Hosted Runner
-        id: check_runner
-        shell: pwsh
-        run: |
-          $APIResponse = Invoke-RestMethod -Headers @{
-            "Accept" = "application/vnd.github+json"
-            "Authorization" = "Bearer ${{ secrets.THDCPL_TOKEN }}"
-            "X-GitHub-Api-Version" = "2022-11-28"
-          } -Uri "https://api.github.com/orgs/THD-C/actions/runners"
-
-          $RunnerList = $APIResponse.runners
-          $SelfHosted = $RunnerList | Where-Object { $_.os -eq "Linux" -and $_.name -eq "thdc" }
-
-          if ($SelfHosted.status -ne "offline") {
-            Add-Content -Path $env:GITHUB_OUTPUT -Value "env_up=true"
-          } else {
-            Add-Content -Path $env:GITHUB_OUTPUT -Value "env_up=false"
-          }
-
-
-
+    uses: THD-C/The_THDc_App/.github/workflows/.github/workflows/build-service-image.yml@main
 
   Build:
     needs: CheckIfRunning

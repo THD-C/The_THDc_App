@@ -1,0 +1,50 @@
+name: Build Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        type: choice
+        default: 'Production'
+        options:
+          - 'Production'
+      service:
+        description: 'Service Repository to build'
+        type: choice
+        required: true
+        options:
+          - 'Mongo_Manager'
+          - 'DB_Manager'
+          - 'Frontend_API'
+          - 'Frontend'
+
+env:
+  COMPOSE_PROFILE_NAME: "APP"
+
+jobs:
+  CheckIfRunning:
+    uses: THD-C/The_THDc_App/.github/workflows/.github/workflows/check-self-hosted-runner.yml@main
+
+
+  Build:
+    needs: CheckIfRunning
+    if: ${{ needs.CheckIfRunning.outputs.env_up == 'true' }}
+    runs-on: self-hosted
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set github_token secret
+        run: |
+          echo "${{ secrets.THDCPL_TOKEN }}" > ./.github_token
+
+      - name: Build Image
+        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} build ${{inputs.service}} --no-cache
+      
+      - name: Stop exitsing container
+        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} down -v -t 20 --rmi
+      
+      - name: Run Container
+        run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d ${{inputs.service}} --force-recreate
