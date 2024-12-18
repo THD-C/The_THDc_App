@@ -19,6 +19,7 @@ on:
           - 'DB_Manager'
           - 'Frontend_API'
           - 'Frontend'
+          - 'Mongo'
 
 env:
   COMPOSE_PROFILE_NAME: "APP"
