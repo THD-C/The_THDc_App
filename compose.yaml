@@ -133,7 +133,7 @@ services:
       - ${TEMPO_PORT}:3200   # tempo
       - ${TEMPO_GRPC}:9095 # tempo grpc
       - ${TEMPO_OTLP_GRCP}:4317  # otlp grpc
-      - $TEMPO_OTLP_HTTP:4318  # otlp http
+      - ${TEMPO_OTLP_HTTP}:4318  # otlp http
       - ${TEMPO_OTLP_ZIPKIN}:9411   # zipkin
     depends_on:
       - memcached
