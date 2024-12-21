@@ -63,6 +63,7 @@ jobs:
         shell: pwsh
         run: |
           $RepoName = "THD-C/SyntheticTest"
+          $WorkflowName = "run-synthetic-tests.yml"
 
           Invoke-RestMethod -Method Post -Headers @{
             "Accept"               = "application/vnd.github+json"
@@ -72,6 +73,6 @@ jobs:
               @{
                   ref = "main"
               } | ConvertTo-Json
-          ) -Uri "https://api.github.com/repos/$RepoName/actions/workflows/run-synthetic-tests.yml/dispatches
+          ) -Uri "https://api.github.com/repos/$RepoName/actions/workflows/$WorkflowName/dispatches"
           
-          Write-Host "https://github.com/$RepoName/actions/workflows/run-synthetic-tests.yml"
+          Write-Host "https://github.com/$RepoName/actions/workflows/$WorkflowName"
