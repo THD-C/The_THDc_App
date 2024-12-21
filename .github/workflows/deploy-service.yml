@@ -52,5 +52,26 @@ jobs:
       - name: Run Container
         run: docker compose --profile ${{env.COMPOSE_PROFILE_NAME}} up -d
 
-      - name: Cleau up deployment server
+      - name: Clean up deployment server
         run: docker system prune --force --volumes
+
+  RunTests:
+    needs: Build
+    runs-on: self-hosted
+    steps:
+      - name: Dispatch event
+        shell: pwsh
+        run: |
+          $RepoName = "THD-C/SyntheticTest"
+
+          Invoke-RestMethod -Method Post -Headers @{
+            "Accept"               = "application/vnd.github+json"
+            "Authorization"        = "Bearer ${{ secrets.THDCPL_TOKEN }}"
+            "X-GitHub-Api-Version" = "2022-11-28"
+          } -Body (
+              @{
+                  ref = "main"
+              } | ConvertTo-Json
+          ) -Uri "https://api.github.com/repos/$RepoName/actions/workflows/run-synthetic-tests.yml/dispatches
+          
+          Write-Host "https://github.com/$RepoName/actions/workflows/run-synthetic-tests.yml"
