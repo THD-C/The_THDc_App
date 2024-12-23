@@ -46,7 +46,7 @@ services:
       build: https://github.com/THD-C/CoinGecko_API.git
       image: thd/coin_gecko_api
       container_name: THD_CoinGecko_API
-      hostname: THD_CoinGecko_API
+      hostname: CoinGecko_API
       restart: unless-stopped
       ports:
         - 50053:50051
