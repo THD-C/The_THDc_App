@@ -19,6 +19,7 @@ on:
           - 'DB_Manager'
           - 'Frontend_API'
           - 'Frontend'
+          - 'CoinGecko_API'
           - 'Mongo'
 
 env:

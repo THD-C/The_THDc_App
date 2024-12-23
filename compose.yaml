@@ -40,6 +40,20 @@ services:
       start_period: 30s
       timeout: 10s
 
+  CoinGecko_API:
+      profiles:
+        - APP
+      build: https://github.com/THD-C/CoinGecko_API.git
+      image: thd/coin_gecko_api
+      container_name: THD_CoinGecko_API
+      hostname: THD_CoinGecko_API
+      restart: unless-stopped
+      ports:
+        - 50053:50051
+      depends_on:
+        Mongo_Manager:
+          condition: service_started
+
   Mongo_Manager:
     profiles:
       - APP
@@ -71,6 +85,7 @@ services:
     depends_on:
       Postgres:
         condition: service_healthy
+
 
   Frontend_API:
     profiles:
