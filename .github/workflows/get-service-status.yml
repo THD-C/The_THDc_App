@@ -1,0 +1,37 @@
+name: Get Service Status
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0,5,10,15,20,25,30,35,40,45,50,55 0 * * *'
+
+
+jobs:
+  CheckIfRunning:
+    uses: THD-C/The_THDc_App/.github/workflows/check-self-hosted-runner.yml@main
+    secrets: inherit
+
+  GetServiceStatus:
+    needs: CheckIfRunning
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Service Status
+        shell: pwsh
+        run: |
+          $ServiceStatus = docker compose ps --format=json | ConvertFrom-Json
+          $ServiceStatus | Select-Object Service, State, Status, Health
+
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| Service | State | Status | Health |"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "|---------|-------|--------|--------|"
+          $ServiceStatus | ForEach-Object {
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| $($_.Service) | $($_.State) | $($_.Status) | $($_.Health) |"
+          }
+
+          if ($ServiceStatus.Health -contains "unhealthy") {
+              throw "Some Service is unhealthy"
+          }
+
+
