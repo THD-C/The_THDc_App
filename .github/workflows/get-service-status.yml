@@ -1,4 +1,4 @@
-name: Get Service Status
+name: Service Status
 
 on:
   workflow_dispatch:
