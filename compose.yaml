@@ -50,9 +50,15 @@ services:
       restart: unless-stopped
       ports:
         - 50053:50051
+      healthcheck:
+        test: ["CMD", "python", "HealthCheck.py"]
+        interval: 30s          
+        timeout: 5s            
+        retries: 3             
+        start_period: 5s       
       depends_on:
         Mongo_Manager:
-          condition: service_started
+          condition: service_healthy
 
   Mongo_Manager:
     profiles:
@@ -68,7 +74,7 @@ services:
       - 50052:50051
     depends_on:
       Mongo:
-        condition: service_started
+        condition: service_healthy
 
   DB_Manager:
     profiles:
@@ -82,6 +88,12 @@ services:
       POSTGRES_URL: "postgresql://default:PL_tech_hand_elk@Postgres:5432/thdc"
     ports:
       - 50051:50051
+    healthcheck:
+      test: ["CMD", "python", "HealthCheck.py"]
+      interval: 30s          
+      timeout: 5s            
+      retries: 3             
+      start_period: 5s   
     depends_on:
       Postgres:
         condition: service_healthy
@@ -102,9 +114,17 @@ services:
       - MONGO_MANAGER=Mongo_Manager
     ports:
       - 8000:8000
+    healthcheck:
+      test: curl --fail http://Frontend_API:8000/api/healthcheck
+      interval: 30s          
+      timeout: 5s            
+      retries: 3             
+      start_period: 5s  
     depends_on:
       DB_Manager:
-        condition: service_started
+        condition: service_healthy
+      Mongo_Manager:
+        condition: service_healthy
 
   Frontend:
     profiles:
@@ -118,7 +138,7 @@ services:
       - 80:80
     depends_on:
       Frontend_API:
-        condition: service_started
+        condition: service_healthy
 
   memcached:
     profiles:
