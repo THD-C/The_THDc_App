@@ -48,6 +48,9 @@ services:
       container_name: THD_CoinGecko_API
       hostname: CoinGecko_API
       restart: unless-stopped
+      environment:
+        - MONGO_MANAGER_PORT=50051
+        - MONGO_MANAGER=Mongo_Manager
       ports:
         - 50053:50051
       healthcheck:
