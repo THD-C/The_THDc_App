@@ -272,10 +272,11 @@ services:
 
   Promtail:
     profiles:
-      - APP
+      - Telemetry
     image: grafana/promtail:2.9.0
     container_name: Promtail
     hostname: Promtail
+    user: root
     environment:
       TZ: Europe/Warsaw
     restart: unless-stopped
