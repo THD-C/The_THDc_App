@@ -30,7 +30,7 @@ jobs:
               Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| $($_.Service) | $($_.State) | $($_.Status) | $($_.Health) |"
           }
 
-          if ($ServiceStatus.Health -contains "unhealthy") {
+          if (($ServiceStatus.Health -contains "unhealthy") -or ($($ServiceStatus.State).ToLower() -contains "restarting")) {
               throw "Some Service is unhealthy"
           }
 
