@@ -7,8 +7,8 @@ services:
     container_name: THD_Postgres
     hostname: Postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
     volumes:
       - PG-Data:/var/lib/postgresql/data
     healthcheck:
@@ -29,8 +29,8 @@ services:
     container_name: THD_Mongo
     hostname: Mongo
     restart: unless-stopped
-    ports:
-      - 27017:27017 
+    # ports:
+    #   - 27017:27017 
     volumes:
       - MO-Data:/data/db
     healthcheck:
@@ -51,8 +51,8 @@ services:
       environment:
         - MONGO_MANAGER_PORT=50051
         - MONGO_MANAGER=Mongo_Manager
-      ports:
-        - 50053:50051
+      # ports:
+      #   - 50053:50051
       healthcheck:
         test: ["CMD", "python", "HealthCheck.py"]
         interval: 30s          
@@ -73,8 +73,8 @@ services:
     restart: unless-stopped
     environment:
       MONGO_URL: "mongodb://Mongo:27017"
-    ports:
-      - 50052:50051
+    # ports:
+    #   - 50052:50051
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]
       interval: 30s          
@@ -95,8 +95,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_URL: "postgresql://default:PL_tech_hand_elk@Postgres:5432/thdc"
-    ports:
-      - 50051:50051
+    # ports:
+    #   - 50051:50051
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]
       interval: 30s          
@@ -121,8 +121,8 @@ services:
       - DB_MANAGER=DB_Manager
       - MONGO_MANAGER_PORT=50051
       - MONGO_MANAGER=Mongo_Manager
-    ports:
-      - 8000:8000
+    # ports:
+    #   - 8000:8000
     healthcheck:
       test: curl --fail http://Frontend_API:8000/api/healthcheck
       interval: 30s          
@@ -141,14 +141,14 @@ services:
     build: 
       context: https://github.com/THD-C/Frontend.git
       args:
-        - TEMPO_URL=http://thdc:1234/tempo
-        - API_URL=http://thdc:1234/api
+        - TEMPO_URL=http://thdc/tempo
+        - API_URL=http://thdc/api
     image: thd/frontend
     container_name: THD_Frontend
     hostname: Frontend
     restart: unless-stopped
-    ports:
-      - 80:80
+    # ports:
+    #   - 80:80
     healthcheck:
       test: curl --fail http://Frontend/en/home
       interval: 30s          
@@ -165,8 +165,8 @@ services:
     container_name: MemCached_Tempo
     restart: unless-stopped
     image: memcached:${MEMCACHED_VER}
-    ports:
-      - "11211:11211"
+    # ports:
+    #   - "11211:11211"
     environment:
       - MEMCACHED_MAX_MEMORY=64m  # Set the maximum memory usage
       - MEMCACHED_THREADS=4       # Number of threads to use
@@ -182,13 +182,13 @@ services:
     volumes:
       - ./config/tempo.yaml:/etc/tempo.yaml
       - Tempo_Data:/var/tempo
-    ports:
-      - ${TEMPO_JAEGER_PORT}:14268  # jaeger ingest
-      - ${TEMPO_PORT}:3200   # tempo
-      - ${TEMPO_GRPC}:9095 # tempo grpc
-      - ${TEMPO_OTLP_GRCP}:4317  # otlp grpc
-      - $TEMPO_OTLP_HTTP:4318  # otlp http
-      - ${TEMPO_OTLP_ZIPKIN}:9411   # zipkin
+    # ports:
+    #   - ${TEMPO_JAEGER_PORT}:14268  # jaeger ingest
+    #   - ${TEMPO_PORT}:3200   # tempo
+    #   - ${TEMPO_GRPC}:9095 # tempo grpc
+    #   - ${TEMPO_OTLP_GRCP}:4317  # otlp grpc
+    #   - $TEMPO_OTLP_HTTP:4318  # otlp http
+    #   - ${TEMPO_OTLP_ZIPKIN}:9411   # zipkin
     depends_on:
       - memcached
 
@@ -241,13 +241,13 @@ services:
 
   Nginx:
     profiles:
-      - Telemetry
+      - APP
     image: nginxproxy/nginx-proxy:1.6-alpine
     container_name: Nginx
     hostname: Nginx
     restart: unless-stopped
     ports:
-      - 1234:80
+      - 80:80
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
