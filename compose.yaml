@@ -138,8 +138,8 @@ services:
     build: 
       context: https://github.com/THD-C/Frontend.git
       args:
-        - TEMPO_URL=http://thdc:1234/v1/traces
-        - API_URL=http://thdc:8000/api
+        - TEMPO_URL=http://thdc:1234/tempo
+        - API_URL=http://thdc:1234/api
     image: thd/frontend
     container_name: THD_Frontend
     hostname: Frontend
