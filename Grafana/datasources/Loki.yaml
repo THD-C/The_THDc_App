@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    uid: fwowirf24kjfwc
+    url: http://Loki:3100
+    

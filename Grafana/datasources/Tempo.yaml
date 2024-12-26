@@ -11,6 +11,12 @@ datasources:
     editable: false
     basicAuth: false
     jsonData:
+      tracesToLogsV2:
+        datasourceUid: fwowirf24kjfwc
+        spanStartTimeShift: '-5s'
+        spanEndTimeShift: '5s'
+        filterByTraceID: true
+        filterBySpanID: false
       tracesToMetrics:
         datasourceUid: reioqwiej32nov
         spanStartTimeShift: '-1h'
