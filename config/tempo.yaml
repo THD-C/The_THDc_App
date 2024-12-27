@@ -10,8 +10,10 @@ cache:
   caches:
   - roles:
     - frontend-search  
-    memcached: 
-      host: memcached:11211
+    # memcached: 
+    #   host: memcached:11211
+    redis:
+      endpoint: Redis:6379
 
 query_frontend:
   search:
