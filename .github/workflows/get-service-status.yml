@@ -21,7 +21,7 @@ jobs:
       - name: Get Service Status
         shell: pwsh
         run: |
-          $ServiceStatus = docker compose ps --format=json | ConvertFrom-Json
+          $ServiceStatus = docker compose --profile "*" ps --format=json | ConvertFrom-Json
           $ServiceStatus | Select-Object Service, State, Status, Health
 
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "| Service | State | Status | Health |"
