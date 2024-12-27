@@ -1,310 +1,82 @@
+name: THDc
+include:
+  - ./Docker/frontend.docker-compose.yaml
+  - ./Docker/backend.docker-compose.yaml
+  - ./Docker/microservices.docker-compose.yaml
+  - ./Docker/database.docker-compose.yaml
+  - ./Docker/telemetry.docker-compose.yaml
+  - ./Docker/network.docker-compose.yaml
+  - ./Docker/volumes.docker-compose.yaml
+  - ./Docker/secrets.docker-compose.yaml
+
 services:
-  Postgres:
-    profiles:
-      - APP
-    build: https://github.com/THD-C/Postgres.git
-    image: thd/postgres
-    container_name: THD_Postgres
-    hostname: Postgres
-    restart: unless-stopped
-    # ports:
-    #   - 5432:5432
-    volumes:
-      - PG-Data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U default -d thdc"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
-
-  Mongo:
-    profiles:
-      - APP
-    build: 
-      context: https://github.com/THD-C/Mongo.git
-      secrets:
-          - github_token
-    image: thd/mongo
-    container_name: THD_Mongo
-    hostname: Mongo
-    restart: unless-stopped
-    # ports:
-    #   - 27017:27017 
-    volumes:
-      - MO-Data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
-
-  # Order_Service:
-  #   build: https://github.com/THD-C/order_service.git
-  #   image: thd/order_manager
-  #   container_name: THD_Order_Service
-  #   hostname: Order_Service
-  #   restart: unless-stopped
-  #   # ports:
-  #   #   - 50054:50051
-
-  CoinGecko_API:
-      profiles:
-        - APP
-      build: https://github.com/THD-C/CoinGecko_API.git
-      image: thd/coin_gecko_api
-      container_name: THD_CoinGecko_API
-      hostname: CoinGecko_API
-      restart: unless-stopped
-      environment:
-        - MONGO_MANAGER_PORT=50051
-        - MONGO_MANAGER=Mongo_Manager
-      # ports:
-      #   - 50053:50051
-      healthcheck:
-        test: ["CMD", "python", "HealthCheck.py"]
-        interval: 30s          
-        timeout: 5s            
-        retries: 3             
-        start_period: 5s       
-      depends_on:
-        Mongo_Manager:
-          condition: service_healthy
-
-  Mongo_Manager:
-    profiles:
-      - APP
-    build: https://github.com/THD-C/Mongo_Manager.git
-    image: thd/mongo_manager
-    container_name: THD_Mongo_Manager
-    hostname: Mongo_Manager
-    restart: unless-stopped
-    environment:
-      MONGO_URL: "mongodb://Mongo:27017"
-    # ports:
-    #   - 50052:50051
-    healthcheck:
-      test: ["CMD", "python", "HealthCheck.py"]
-      interval: 30s          
-      timeout: 5s            
-      retries: 3             
-      start_period: 5s   
-    depends_on:
-      Mongo:
-        condition: service_healthy
-
-  DB_Manager:
-    profiles:
-      - APP
-    build: https://github.com/THD-C/DB_Manager.git
-    image: thd/db_manager
-    container_name: THD_DB_Manager
-    hostname: DB_Manager
-    restart: unless-stopped
-    environment:
-      POSTGRES_URL: "postgresql://default:PL_tech_hand_elk@Postgres:5432/thdc"
-    # ports:
-    #   - 50051:50051
-    healthcheck:
-      test: ["CMD", "python", "HealthCheck.py"]
-      interval: 30s          
-      timeout: 5s            
-      retries: 3             
-      start_period: 5s   
-    depends_on:
-      Postgres:
-        condition: service_healthy
-
-
-  Frontend_API:
-    profiles:
-      - APP
-    build: https://github.com/THD-C/Frontend_API.git
-    image: thd/frontend_api
-    container_name: THD_Frontend_API
-    hostname: Frontend_API
-    restart: unless-stopped
-    environment:
-      - DB_MANAGER_PORT=50051
-      - DB_MANAGER=DB_Manager
-      - MONGO_MANAGER_PORT=50051
-      - MONGO_MANAGER=Mongo_Manager
-    # ports:
-    #   - 8000:8000
-    healthcheck:
-      test: curl --fail http://Frontend_API:8000/api/healthcheck
-      interval: 30s          
-      timeout: 5s            
-      retries: 3             
-      start_period: 5s  
-    depends_on:
-      DB_Manager:
-        condition: service_healthy
-      Mongo_Manager:
-        condition: service_healthy
-
-  Frontend:
-    profiles:
-      - APP
-    build: 
-      context: https://github.com/THD-C/Frontend.git
-      args:
-        - TEMPO_URL=http://thdc/tempo
-        - API_URL=http://thdc/api
-    image: thd/frontend
-    container_name: THD_Frontend
-    hostname: Frontend
-    restart: unless-stopped
-    # ports:
-    #   - 80:80
-    healthcheck:
-      test: curl --fail http://Frontend/en/home
-      interval: 30s          
-      timeout: 5s            
-      retries: 3             
-      start_period: 5s  
-    depends_on:
-      Frontend_API:
-        condition: service_healthy
-
-  memcached:
+  Grafana:
     profiles:
       - Telemetry
-    container_name: MemCached_Tempo
+    image: grafana/grafana-enterprise:11.1.4
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 300M
+        reservations:
+          cpus: '0.15'
+          memory: 100M
+    container_name: THD_Grafana
+    hostname: Grafana
     restart: unless-stopped
-    image: memcached:${MEMCACHED_VER}
-    # ports:
-    #   - "11211:11211"
-    environment:
-      - MEMCACHED_MAX_MEMORY=64m  # Set the maximum memory usage
-      - MEMCACHED_THREADS=4       # Number of threads to use
-
-  tempo:
-    profiles:
-      - Telemetry
-    container_name: Tempo
-    hostname: Tempo
-    restart: unless-stopped
-    image: grafana/tempo:${TEMPO_VER}
-    command: [ "-config.file=/etc/tempo.yaml" ]
-    volumes:
-      - ./config/tempo.yaml:/etc/tempo.yaml
-      - Tempo_Data:/var/tempo
-    # ports:
-    #   - ${TEMPO_JAEGER_PORT}:14268  # jaeger ingest
-    #   - ${TEMPO_PORT}:3200   # tempo
-    #   - ${TEMPO_GRPC}:9095 # tempo grpc
-    #   - ${TEMPO_OTLP_GRCP}:4317  # otlp grpc
-    #   - $TEMPO_OTLP_HTTP:4318  # otlp http
-    #   - ${TEMPO_OTLP_ZIPKIN}:9411   # zipkin
-    depends_on:
-      - memcached
-
-  prometheus:
-    profiles:
-      - Telemetry
-    container_name: Prometheus
-    hostname: Prometheus
-    restart: unless-stopped
-    image: prom/prometheus:${PROMETHEUS_VER}
-    command:
-      - --config.file=/etc/prometheus.yaml
-      - --web.enable-remote-write-receiver
-      - --enable-feature=exemplar-storage
-      - --enable-feature=native-histograms
-      - --storage.tsdb.path=/prometheus
-      - --storage.tsdb.retention.time=14d
-    volumes:
-      - ./config/prometheus.yaml:/etc/prometheus.yaml
-      - Prometheus_Data:/prometheus
-    # ports:
-    #   - ${PROMETHEUS_PORT}:9090
-
-  Loki:
-    profiles:
-      - Telemetry
-    image: grafana/loki:2.9.0
-    container_name: Loki
-    hostname: Loki
     environment:
       TZ: Europe/Warsaw
-    restart: unless-stopped
-    command:
-      -config.file=/etc/loki/loki.yaml
+      GF_DATE_FORMATS_DEFAULT_TIMEZONE: Europe/Warsaw
     volumes:
-      - ./config/loki.yaml:/etc/loki/loki.yaml
-      - Loki-data:/loki
-    # ports:
-    #   - 3100:3100
-
-  Grafana:
-      profiles:
-        - Telemetry
-      image: ${GRAFANA_IMAGE_NAME}
-      build:
-        context: ./Grafana
-        dockerfile: Dockerfile
-      container_name: ${GRAFANA_CONTAINER_NAME}
-      hostname: ${GRAFANA_HOSTNAME}
-      restart: unless-stopped
-      environment:
-        TZ: ${SYSTEM_TIME_ZONE}
-        GF_DATE_FORMATS_DEFAULT_TIMEZONE: ${SYSTEM_TIME_ZONE}
-      volumes:
-        - ./Grafana/datasources:/etc/grafana/provisioning/datasources
-        # - ./Grafana/dashboards_provisioning:/etc/grafana/provisioning/dashboards
-        # - ./Grafana/dashboards:/var/lib/grafana/dashboards
-        - Grafana-data:/var/lib/grafana
-      ports:
-        - ${GRAFANA_EXTERNAL_PORT}:3000
-      healthcheck:
-        test: curl --fail http://${GRAFANA_HOSTNAME}:3000/api/health
-        start_period: 2s
-        interval: 3s
-        timeout: 1s
-        retries: 5
+      - ./config/Grafana/datasources:/etc/grafana/provisioning/datasources
+      # - ./config/Grafana/dashboards_provisioning:/etc/grafana/provisioning/dashboards
+      # - ./config/Grafana/dashboards:/var/lib/grafana/dashboards
+      - GrafanaData:/var/lib/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - MicroservicesNet
+      - InternetAccessNet
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--no-verbose", "--tries=1", "http://Grafana:3000/api/health"]
+      start_period: 2s
+      interval: 3s
+      timeout: 1s
+      retries: 5
 
   App_Proxy:
     profiles:
       - APP
     image: nginxproxy/nginx-proxy:1.6-alpine
-    container_name: App_Proxy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+        reservations:
+          cpus: '0.25'
+          memory: 50M
+    container_name: THD_App_Proxy
     hostname: App_Proxy
     restart: unless-stopped
     ports:
       - 80:80
+    networks:
+      - MicroservicesNet
+      - InternetAccessNet
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - NG-log:/var/log
-
-  Promtail:
-    profiles:
-      - Telemetry
-    image: grafana/promtail:2.9.0
-    container_name: Promtail
-    hostname: Promtail
-    environment:
-      TZ: Europe/Warsaw
-    restart: unless-stopped
-    command:
-      -config.file=/etc/promtail/promtail.yaml
-    volumes:
-      - ./config/promtail.yaml:/etc/promtail/promtail.yaml
-      - NG-log:/var/log/work/
-    # ports:
-    #   - 9080:9080
-
-secrets:
-  github_token:
-    file: ./.github_token
-
-volumes:
-  PG-Data:
-  MO-Data:
-  NG-log:
-  Tempo_Data:
-  Prometheus_Data:
-  Grafana-data:
-  Loki-data:
+      - AppProxyLog:/var/log
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--no-verbose", "--tries=1", "http://App_Proxy:80/ready"]
+      start_period: 2s
+      interval: 3s
+      timeout: 1s
+      retries: 5
+    depends_on:
+      Frontend:
+        condition: service_healthy
+      Frontend_API:
+        condition: service_healthy

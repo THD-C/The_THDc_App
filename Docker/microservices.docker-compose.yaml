@@ -1,0 +1,125 @@
+services:
+  Order_Service:
+    profiles:
+      - APP
+    build: https://github.com/THD-C/Order_Service.git
+    image: thd/order_service
+    deploy:
+      resources:
+        limits:
+          cpus: '2.00'
+          memory: 500M
+        reservations:
+          cpus: '0.50'
+          memory: 100M
+    container_name: THD_Order_Service
+    hostname: Order_Service
+    restart: unless-stopped
+    # ports:
+    #   - 50054:50051
+    networks:
+      - MicroservicesNet
+    depends_on:
+      DB_Manager:
+        condition: service_healthy
+      CoinGecko_API:
+        condition: service_healthy
+
+  CoinGecko_API:
+    profiles:
+      - APP
+    build: https://github.com/THD-C/CoinGecko_API.git
+    image: thd/coin_gecko_api
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 500M
+        reservations:
+          cpus: '0.25'
+          memory: 300M
+    container_name: THD_CoinGecko_API
+    hostname: CoinGecko_API
+    restart: unless-stopped
+    environment:
+      - MONGO_MANAGER_PORT=50051
+      - MONGO_MANAGER=Mongo_Manager
+    # ports:
+    #   - 50053:50051
+    networks:
+      - MicroservicesNet
+    healthcheck:
+      test: ["CMD", "python", "HealthCheck.py"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      Mongo_Manager:
+        condition: service_healthy
+
+  Mongo_Manager:
+    profiles:
+      - APP
+    build: https://github.com/THD-C/Mongo_Manager.git
+    image: thd/mongo_manager
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+        reservations:
+          cpus: '0.25'
+          memory: 75M
+    container_name: THD_Mongo_Manager
+    hostname: Mongo_Manager
+    restart: unless-stopped
+    environment:
+      MONGO_URL: "mongodb://Mongo:27017"
+    # ports:
+    #   - 50052:50051
+    networks:
+      - MicroservicesNet
+      - MongoNet
+    healthcheck:
+      test: ["CMD", "python", "HealthCheck.py"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      Mongo:
+        condition: service_healthy
+
+  DB_Manager:
+    profiles:
+      - APP
+    build: https://github.com/THD-C/DB_Manager.git
+    image: thd/db_manager
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 300M
+        reservations:
+          cpus: '0.25'
+          memory: 100M
+    container_name: THD_DB_Manager
+    hostname: DB_Manager
+    restart: unless-stopped
+    environment:
+      POSTGRES_URL: "postgresql://default:PL_tech_hand_elk@Postgres:5432/thdc"
+    # ports:
+    #   - 50051:50051
+    networks:
+      - MicroservicesNet
+      - PostgresNet
+    healthcheck:
+      test: ["CMD", "python", "HealthCheck.py"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      Postgres:
+        condition: service_healthy

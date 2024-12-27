@@ -1,0 +1,34 @@
+services:
+  Frontend:
+    profiles:
+      - APP
+    build: 
+      context: https://github.com/THD-C/Frontend.git
+      args:
+        - TEMPO_URL=http://thdc/tempo
+        - API_URL=http://thdc/api
+    image: thd/frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 200M
+        reservations:
+          cpus: '0.15'
+          memory: 100M
+    container_name: THD_Frontend
+    hostname: Frontend
+    restart: unless-stopped
+    # ports:
+    #   - 80:80
+    networks:
+      - MicroservicesNet
+    healthcheck:
+      test: curl --fail http://Frontend/en/home
+      interval: 30s          
+      timeout: 5s            
+      retries: 3             
+      start_period: 5s  
+    depends_on:
+      Frontend_API:
+        condition: service_healthy

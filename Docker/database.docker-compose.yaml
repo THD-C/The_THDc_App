@@ -1,0 +1,61 @@
+services:
+  Postgres:
+    profiles:
+      - APP
+    build: https://github.com/THD-C/Postgres.git
+    image: thd/postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+        reservations:
+          cpus: '0.20'
+          memory: 200M
+    container_name: THD_Postgres
+    hostname: Postgres
+    restart: unless-stopped
+    # ports:
+    #   - 5432:5432
+    volumes:
+      - PostgresData:/var/lib/postgresql/data
+    networks:
+      - PostgresNet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U default -d thdc"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  Mongo:
+    profiles:
+      - APP
+    build: 
+      context: https://github.com/THD-C/Mongo.git
+      secrets:
+          - github_token
+    image: thd/mongo
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+        reservations:
+          cpus: '0.30'
+          memory: 200M
+    container_name: THD_Mongo
+    hostname: Mongo
+    restart: unless-stopped
+    # ports:
+    #   - 27017:27017 
+    volumes:
+      - MongoData:/data/db
+    networks:
+      - MongoNet
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
