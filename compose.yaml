@@ -21,9 +21,9 @@ services:
       TZ: Europe/Warsaw
       GF_DATE_FORMATS_DEFAULT_TIMEZONE: Europe/Warsaw
     volumes:
-      - ./Grafana/datasources:/etc/grafana/provisioning/datasources
-      # - ./Grafana/dashboards_provisioning:/etc/grafana/provisioning/dashboards
-      # - ./Grafana/dashboards:/var/lib/grafana/dashboards
+      - ./config/Grafana/datasources:/etc/grafana/provisioning/datasources
+      # - ./config/Grafana/dashboards_provisioning:/etc/grafana/provisioning/dashboards
+      # - ./config/Grafana/dashboards:/var/lib/grafana/dashboards
       - GrafanaData:/var/lib/grafana
     ports:
       - 3000:3000
