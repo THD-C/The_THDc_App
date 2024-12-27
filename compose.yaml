@@ -13,10 +13,7 @@ services:
   Grafana:
     profiles:
       - Telemetry
-    image: thdc/grafana
-    build:
-      context: ./Grafana
-      dockerfile: Dockerfile
+    image: grafana/grafana-enterprise:11.1.4
     container_name: Grafana
     hostname: Grafana
     restart: unless-stopped
@@ -34,7 +31,7 @@ services:
       - MicroservicesNet
       - InternetAccessNet
     healthcheck:
-      test: curl --fail http://Grafana:3000/api/health
+      test: ["CMD", "wget", "--spider", "--no-verbose", "--tries=1", "http://Grafana:3000/api/health"]
       start_period: 2s
       interval: 3s
       timeout: 1s
@@ -56,6 +53,12 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
       - AppProxyLog:/var/log
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--no-verbose", "--tries=1", "http://App_Proxy:80/ready"]
+      start_period: 2s
+      interval: 3s
+      timeout: 1s
+      retries: 5
     depends_on:
       Frontend:
         condition: service_healthy
