@@ -88,7 +88,7 @@ services:
     networks:
       - MicroservicesNet
     # ports:
-    #   - ${PROMETHEUS_PORT}:9090
+    #   - 9090:9090
     healthcheck:
       test: ["CMD", "wget", "--spider", "--no-verbose", "--tries=1", "http://Prometheus:9090/metrics"]
       interval: 30s

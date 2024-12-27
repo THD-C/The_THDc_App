@@ -15,5 +15,6 @@ scrape_configs:
           "Mongo_Manager:8111",
           "DB_Manager:8111",
           "Frontend_API:8111",
-          "CoinGecko_API:8111"
+          "CoinGecko_API:8111",
+          "Order_Service:8111"
         ]
