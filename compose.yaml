@@ -40,6 +40,15 @@ services:
       start_period: 30s
       timeout: 10s
 
+  Order_Service:
+    build: https://github.com/THD-C/order_service.git
+    image: thd/order_manager
+    container_name: THD_Order_Service
+    hostname: Order_Service
+    restart: unless-stopped
+    # ports:
+    #   - 50054:50051
+
   CoinGecko_API:
       profiles:
         - APP
