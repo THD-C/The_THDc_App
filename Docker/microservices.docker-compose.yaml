@@ -1,5 +1,7 @@
 services:
   Order_Service:
+    profiles:
+      - APP
     build: https://github.com/THD-C/Order_Service.git
     image: thd/order_service
     deploy:
