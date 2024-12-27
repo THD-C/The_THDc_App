@@ -10,6 +10,8 @@ services:
     environment:
       - MEMCACHED_MAX_MEMORY=64m  # Set the maximum memory usage
       - MEMCACHED_THREADS=4       # Number of threads to use
+    networks:
+      - MicroservicesNet
 
   tempo:
     profiles:
@@ -29,6 +31,8 @@ services:
     #   - ${TEMPO_OTLP_GRCP}:4317  # otlp grpc
     #   - $TEMPO_OTLP_HTTP:4318  # otlp http
     #   - ${TEMPO_OTLP_ZIPKIN}:9411   # zipkin
+    networks:
+      - MicroservicesNet
     depends_on:
       - memcached
 
@@ -49,6 +53,8 @@ services:
     volumes:
       - ./../config/prometheus.yaml:/etc/prometheus.yaml
       - PrometheusData:/prometheus
+    networks:
+      - MicroservicesNet
     # ports:
     #   - ${PROMETHEUS_PORT}:9090
 
@@ -66,6 +72,8 @@ services:
     volumes:
       - ./../config/loki.yaml:/etc/loki/loki.yaml
       - LokiData:/loki
+    networks:
+      - MicroservicesNet
     # ports:
     #   - 3100:3100
 
@@ -83,5 +91,7 @@ services:
     volumes:
       - ./../config/promtail.yaml:/etc/promtail/promtail.yaml
       - AppProxyLog:/var/log/work/
+    networks:
+      - MicroservicesNet
     # ports:
     #   - 9080:9080

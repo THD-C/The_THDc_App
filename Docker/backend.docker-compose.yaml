@@ -14,6 +14,8 @@ services:
       - MONGO_MANAGER=Mongo_Manager
     # ports:
     #   - 8000:8000
+    networks:
+      - MicroservicesNet
     healthcheck:
       test: curl --fail http://Frontend_API:8000/api/healthcheck
       interval: 30s          

@@ -21,6 +21,8 @@ services:
       - MONGO_MANAGER=Mongo_Manager
     # ports:
     #   - 50053:50051
+    networks:
+      - MicroservicesNet
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]
       interval: 30s
@@ -43,6 +45,9 @@ services:
       MONGO_URL: "mongodb://Mongo:27017"
     # ports:
     #   - 50052:50051
+    networks:
+      - MicroservicesNet
+      - MongoNet
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]
       interval: 30s
@@ -65,6 +70,9 @@ services:
       POSTGRES_URL: "postgresql://default:PL_tech_hand_elk@Postgres:5432/thdc"
     # ports:
     #   - 50051:50051
+    networks:
+      - MicroservicesNet
+      - PostgresNet
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]
       interval: 30s

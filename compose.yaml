@@ -5,6 +5,7 @@ include:
   - ./Docker/microservices.docker-compose.yaml
   - ./Docker/database.docker-compose.yaml
   - ./Docker/telemetry.docker-compose.yaml
+  - ./Docker/network.docker-compose.yaml
   - ./Docker/volumes.docker-compose.yaml
   - ./Docker/secrets.docker-compose.yaml
 
@@ -29,6 +30,9 @@ services:
       - GrafanaData:/var/lib/grafana
     ports:
       - 3000:3000
+    networks:
+      - MicroservicesNet
+      - InternetAccessNet
     healthcheck:
       test: curl --fail http://Grafana:3000/api/health
       start_period: 2s
@@ -45,6 +49,9 @@ services:
     restart: unless-stopped
     ports:
       - 80:80
+    networks:
+      - MicroservicesNet
+      - InternetAccessNet
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
