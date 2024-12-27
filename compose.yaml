@@ -209,8 +209,8 @@ services:
     volumes:
       - ./config/prometheus.yaml:/etc/prometheus.yaml
       - Prometheus_Data:/prometheus
-    ports:
-      - ${PROMETHEUS_PORT}:9090
+    # ports:
+    #   - ${PROMETHEUS_PORT}:9090
 
   Loki:
     profiles:
@@ -225,9 +225,9 @@ services:
       -config.file=/etc/loki/loki.yaml
     volumes:
       - ./config/loki.yaml:/etc/loki/loki.yaml
-      - LK-data:/loki
-    ports:
-      - 3100:3100
+      - Loki-data:/loki
+    # ports:
+    #   - 3100:3100
 
   Grafana:
       profiles:
@@ -246,7 +246,7 @@ services:
         - ./Grafana/datasources:/etc/grafana/provisioning/datasources
         # - ./Grafana/dashboards_provisioning:/etc/grafana/provisioning/dashboards
         # - ./Grafana/dashboards:/var/lib/grafana/dashboards
-        - GF-data:/var/lib/grafana
+        - Grafana-data:/var/lib/grafana
       ports:
         - ${GRAFANA_EXTERNAL_PORT}:3000
       healthcheck:
@@ -256,12 +256,12 @@ services:
         timeout: 1s
         retries: 5
 
-  Nginx:
+  App_Proxy:
     profiles:
       - APP
     image: nginxproxy/nginx-proxy:1.6-alpine
-    container_name: Nginx
-    hostname: Nginx
+    container_name: App_Proxy
+    hostname: App_Proxy
     restart: unless-stopped
     ports:
       - 80:80
@@ -276,7 +276,6 @@ services:
     image: grafana/promtail:2.9.0
     container_name: Promtail
     hostname: Promtail
-    user: root
     environment:
       TZ: Europe/Warsaw
     restart: unless-stopped
@@ -285,9 +284,8 @@ services:
     volumes:
       - ./config/promtail.yaml:/etc/promtail/promtail.yaml
       - NG-log:/var/log/work/
-    ports:
-      - 9080:9080
-
+    # ports:
+    #   - 9080:9080
 
 secrets:
   github_token:
@@ -296,8 +294,8 @@ secrets:
 volumes:
   PG-Data:
   MO-Data:
+  NG-log:
   Tempo_Data:
   Prometheus_Data:
-  GF-data:
-  LK-data:
-  NG-log:
+  Grafana-data:
+  Loki-data:
