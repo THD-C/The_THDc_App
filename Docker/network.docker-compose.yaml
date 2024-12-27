@@ -11,3 +11,6 @@ networks:
   PostgresNet:
     name: Postgres Network
     internal: true
+  RedisNet:
+    name: Redis Network
+    internal: true
