@@ -1,0 +1,8 @@
+volumes:
+  PostgresData:
+  MongoData:
+  TempoData:
+  PrometheusData:
+  GrafanaData:
+  LokiData:
+  AppProxyLog:

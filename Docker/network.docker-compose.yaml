@@ -1,0 +1,13 @@
+networks:
+  InternetAccessNet:
+    name: Internet access
+    driver: bridge
+  MicroservicesNet:
+    name: Microservices Network
+    internal: true
+  MongoNet:
+    name: Mongo Network
+    internal: true
+  PostgresNet:
+    name: Postgres Network
+    internal: true
