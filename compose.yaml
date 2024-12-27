@@ -14,7 +14,15 @@ services:
     profiles:
       - Telemetry
     image: grafana/grafana-enterprise:11.1.4
-    container_name: Grafana
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 300M
+        reservations:
+          cpus: '0.15'
+          memory: 100M
+    container_name: THD_Grafana
     hostname: Grafana
     restart: unless-stopped
     environment:
@@ -41,6 +49,14 @@ services:
     profiles:
       - APP
     image: nginxproxy/nginx-proxy:1.6-alpine
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 200M
+        reservations:
+          cpus: '0.25'
+          memory: 50M
     container_name: THD_App_Proxy
     hostname: App_Proxy
     restart: unless-stopped

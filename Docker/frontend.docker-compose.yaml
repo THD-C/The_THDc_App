@@ -8,6 +8,14 @@ services:
         - TEMPO_URL=http://thdc/tempo
         - API_URL=http://thdc/api
     image: thd/frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 200M
+        reservations:
+          cpus: '0.15'
+          memory: 100M
     container_name: THD_Frontend
     hostname: Frontend
     restart: unless-stopped

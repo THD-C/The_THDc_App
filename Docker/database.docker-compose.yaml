@@ -4,6 +4,14 @@ services:
       - APP
     build: https://github.com/THD-C/Postgres.git
     image: thd/postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+        reservations:
+          cpus: '0.20'
+          memory: 200M
     container_name: THD_Postgres
     hostname: Postgres
     restart: unless-stopped
@@ -28,6 +36,14 @@ services:
       secrets:
           - github_token
     image: thd/mongo
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+        reservations:
+          cpus: '0.30'
+          memory: 200M
     container_name: THD_Mongo
     hostname: Mongo
     restart: unless-stopped

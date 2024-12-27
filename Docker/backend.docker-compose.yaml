@@ -4,6 +4,14 @@ services:
       - APP
     build: https://github.com/THD-C/Frontend_API.git
     image: thd/frontend_api
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 400M
+        reservations:
+          cpus: '0.25'
+          memory: 150M
     container_name: THD_Frontend_API
     hostname: Frontend_API
     restart: unless-stopped
