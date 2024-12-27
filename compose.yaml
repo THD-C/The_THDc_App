@@ -1,4 +1,4 @@
-name: THDc
+name: thdc
 include:
   - ./Docker/frontend.docker-compose.yaml
   - ./Docker/backend.docker-compose.yaml
