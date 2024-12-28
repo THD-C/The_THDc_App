@@ -30,4 +30,4 @@ jobs:
           echo "${{ secrets.THDCPL_TOKEN }}" > ./.github_token
 
       - name: Build Images
-        run: docker compose --profile APP build --no-cache
+        run: docker compose --profile "*" build --no-cache
