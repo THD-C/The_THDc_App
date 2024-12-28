@@ -21,11 +21,12 @@ services:
       - MONGO_MANAGER_PORT=50051
       - MONGO_MANAGER=Mongo_Manager
       - PRICE_MANAGER_PORT=50051
-      - PRICE_MANAGER=CoinGecko_API
+      - PRICE_MANAGER=CoinGecko_API_inernal
     # ports:
     #   - 8000:8000
     networks:
       - MicroservicesNet
+      - InternetAccessNet
     healthcheck:
       test: curl --fail http://Frontend_API:8000/api/healthcheck
       interval: 30s          

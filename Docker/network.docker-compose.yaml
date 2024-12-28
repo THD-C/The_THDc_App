@@ -1,6 +1,13 @@
 networks:
+
+  ApplicationAccessNet:
+    name: Application Access
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_icc: "false"
+
   InternetAccessNet:
-    name: Internet access
+    name: Internet Access
     driver: bridge
     driver_opts:
       com.docker.network.bridge.enable_icc: "false"
