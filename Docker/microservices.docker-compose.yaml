@@ -16,7 +16,7 @@ services:
     hostname: Order_Service
     restart: unless-stopped
     environment:
-      - DB_MANAGER_ADDRESS=DB_Manager
+      - DB_MANAGER_ADDRESS=DB_Manager:50051
       - COINGECKO_SERVICE_ADDRESS=CoinGecko_API_internal:50051
     # ports:
     #   - 50054:50051
