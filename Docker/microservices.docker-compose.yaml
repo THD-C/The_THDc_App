@@ -15,10 +15,19 @@ services:
     container_name: THD_Order_Service
     hostname: Order_Service
     restart: unless-stopped
+    environment:
+      - DB_MANAGER_ADDRESS=DB_Manager
+      - COINGECKO_SERVICE_ADDRESS=CoinGecko_API_internal:50051
     # ports:
     #   - 50054:50051
     networks:
       - MicroservicesNet
+    healthcheck:
+      test: ["CMD", "go", "run", "check_health.go"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     depends_on:
       DB_Manager:
         condition: service_healthy
@@ -49,7 +58,7 @@ services:
     networks:
       MicroservicesNet:
         aliases:
-          - CoinGecko_API_inernal
+          - CoinGecko_API_internal
       InternetAccessNet:
     healthcheck:
       test: ["CMD", "python", "HealthCheck.py"]

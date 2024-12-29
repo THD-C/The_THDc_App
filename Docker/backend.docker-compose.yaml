@@ -21,7 +21,7 @@ services:
       - MONGO_MANAGER_PORT=50051
       - MONGO_MANAGER=Mongo_Manager
       - PRICE_MANAGER_PORT=50051
-      - PRICE_MANAGER=CoinGecko_API_inernal
+      - PRICE_MANAGER=CoinGecko_API_internal
     # ports:
     #   - 8000:8000
     networks:
