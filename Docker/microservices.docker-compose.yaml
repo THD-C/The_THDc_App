@@ -135,3 +135,5 @@ services:
     depends_on:
       Postgres:
         condition: service_healthy
+      Mongo_Manager:
+        condition: service_healthy
