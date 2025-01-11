@@ -22,6 +22,8 @@ services:
       - MONGO_MANAGER=Mongo_Manager
       - PRICE_MANAGER_PORT=50051
       - PRICE_MANAGER=CoinGecko_API_internal
+      - ORDER_SERVICE=Order_Service
+      - ORDER_SERVICE_PORT=50051
     # ports:
     #   - 8000:8000
     networks:
