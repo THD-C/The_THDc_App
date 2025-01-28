@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get Service Status
+        if: ${{ needs.CheckIfRunning.outputs.isRunnerUp == 'true' }}
         shell: pwsh
         run: |
           $ServiceStatus = docker compose --profile "*" ps --format=json | ConvertFrom-Json
